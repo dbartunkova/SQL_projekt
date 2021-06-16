@@ -9,7 +9,7 @@ Samotné počty nakažených mi nicméně nejsou nic platné - je potřeba vzít
 Bylo potřeba upravit hodnoty v tabulkách lookup_table a covid19_basic_differences a změnit název Czechia na Czech Republic, aby se názvy státu shodovaly napříč všemi tabulkami.
 
 
-### V tabulce jsou vedle klíčů country a date tyto sloupce: 
+#### V tabulce jsou vedle klíčů country a date tyto sloupce: 
 
 weekend - binární proměnná pro víkend / pracovní den
 
