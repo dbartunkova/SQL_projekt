@@ -25,6 +25,10 @@ mortaliy_under_5 - dětská úmrtnost - použijeme jako indikátor kvality zdrav
 
 median_age_2018 - medián věku obyvatel v roce 2018 - státy se starším obyvatelstvem mohou být postiženy více
 
+percentage_confirmed - procento pozitivních případů z provedených testů
+
+confirmed_per_milion - počet potvrzených případů v přepočtu na milion obyvatel
+
 religion a religion_percentage_2020 - podíly jednotlivých náboženství - použijeme jako proxy proměnnou pro kulturní specifika. Pro každé náboženství v daném státě bych chtěl procentní podíl jeho příslušníků na celkovém obyvatelstvu
 
 life_exp_difference - rozdíl mezi očekávanou dobou dožití v roce 1965 a v roce 2015 - státy, ve kterých proběhl rychlý rozvoj mohou reagovat jinak než země, které jsou vyspělé už delší dobu
