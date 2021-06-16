@@ -9,11 +9,11 @@ Samotné počty nakažených mi nicméně nejsou nic platné - je potřeba vzít
 Bylo potřeba upravit hodnoty v tabulkách lookup_table a covid19_basic_differences a změnit název Czechia na Czech Republic, aby se názvy státu shodovaly napříč všemi tabulkami.
 
 
-## V tabulce jsou vedle klíčů country a date tyto sloupce: 
+### V tabulce jsou vedle klíčů country a date tyto sloupce: 
 
 ## Časové proměnné
-### weekend - binární proměnná pro víkend / pracovní den
-### season - roční období daného dne (zakódujte prosím jako 0 až 3)
+weekend - binární proměnná pro víkend / pracovní den
+season - roční období daného dne (zakódujte prosím jako 0 až 3)
 
 ## Proměnné specifické pro daný stát
 ### population_density - hustota zalidnění - ve státech s vyšší hustotou zalidnění se nákaza může šířit rychleji
@@ -27,7 +27,7 @@ Bylo potřeba upravit hodnoty v tabulkách lookup_table a covid19_basic_differen
 ## Počasí (ovlivňuje chování lidí a také schopnost šíření viru)
 ### průměrná denní (nikoli noční!) teplota
 ### rainy_hours - počet hodin v daném dni, kdy byly srážky nenulové
-### max_daily_gust - maximální síla větru v nárazech během dne
+#### max_daily_gust - maximální síla větru v nárazech během dne
 
 
 
