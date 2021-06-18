@@ -4,9 +4,6 @@ UPDATE lookup_table SET country = 'Czech Republic' WHERE country = 'Czechia';
 
 UPDATE covid19_basic_differences SET country = 'Czech Republic' WHERE country = 'Czechia';
 
-
-ALTER TABLE weather MODIFY temp TEXT;
-
 -- úprava hodnot v tabulce countries z "Praha" na "Prague"
 UPDATE countries SET capital_city = 'Prague' WHERE capital_city = 'Praha';
 
@@ -24,10 +21,10 @@ CREATE VIEW v_season AS
 SELECT 
 	c.country , 
 	c.date, 
- (CASE WHEN month(c.date) IN (12, 1, 2) THEN 'winter'
-      WHEN month(c.date) IN (3, 4, 5) THEN 'spring'
-      WHEN month(c.date) IN (6, 7, 8) THEN 'summer'
-      WHEN month(c.date) IN (9, 10, 11) THEN 'autumn'
+ (CASE WHEN month(c.date) IN (12, 1, 2) THEN '0'
+      WHEN month(c.date) IN (3, 4, 5) THEN '1'
+      WHEN month(c.date) IN (6, 7, 8) THEN '2'
+      WHEN month(c.date) IN (9, 10, 11) THEN '3'
  END) AS season
 FROM covid19_basic_differences c
 ;
@@ -45,7 +42,7 @@ JOIN v_season
 AND v_weekend.date = v_season.date
 ;
 
--- vytvoøení GDP na osobu za rok 2019 = 'GDP_obyvatele_2019'
+-- vytvoøení view s GDP na osobu za rok 2019 = 'GDP_obyvatele_2019'
 CREATE VIEW v_hdp AS
 SELECT 
         *, 
@@ -148,23 +145,23 @@ JOIN v_doba_doziti
 -- vytvoøení sloupce 'percentage confirmed' - procento z provedených testù, které byly pozitivní
 CREATE VIEW v_covid AS
 SELECT
-        base.date,
-        base.country,
-        base.confirmed,
-        a.tests_performed,
+        base.date ,
+        base.country ,
+        base.confirmed ,
+        a.tests_performed ,
         ROUND((base.confirmed * 100) / a.tests_performed, 2) AS percentage_confirmed
 FROM (
           SELECT 
-                  date,
-                country,
+                  date ,
+                country ,
                 confirmed
           FROM covid19_basic_differences cbd 
          ) base
 LEFT JOIN 
          (
           SELECT
-          			date,
-                  country,
+          			date ,
+                  country ,
                   tests_performed
           FROM covid19_tests ct 
          ) a
@@ -198,7 +195,7 @@ SELECT
 	base.country, 
 	base.date , 
 	base.weekend , 
-	base.season, 
+	base.season , 
 	base.mortaliy_under5 ,
 	base.GDP_obyvatele_2019 , 
 	base.religion , 
@@ -217,14 +214,14 @@ JOIN v_covid AS a
 -- vytvoøení sloupce 'confirmed_per_milion' - poèet dennì potvrzených pøípadù na milion obyvatel
 CREATE VIEW v_daily_confirmed_per_milion AS
 SELECT
-        base.date,
-        base.country,
-        base.confirmed,
+        base.date ,
+        base.country ,
+        base.confirmed ,
         ROUND((base.confirmed*1000000)/a.population, 2) AS confirmed_per_milion
 FROM (
           SELECT 
-                  date,
-                country,
+                  date ,
+                country ,
                 confirmed 
           FROM covid19_basic_differences cb
          ) base
@@ -248,7 +245,7 @@ SELECT
 	base.mortaliy_under5 ,
 	base.GDP_obyvatele_2019 , 
 	base.religion , 
-	base.religion_percentage_2020,
+	base.religion_percentage_2020 ,
 	base.life_exp_difference , 
 	base.capital_city , 
 	base.population_density , 
@@ -328,10 +325,14 @@ SELECT
 	base.gini_koeficient , 
 	a.rainy_hours
 FROM v_wsmgrrlcpmpcg AS base 
-JOIN v_rain AS a
+LEFT JOIN v_rain AS a
 	ON base.capital_city = a.city
 	AND base.date = a.date
 ;
+
+select * from v_wsmgrrlcpmpcg
+where country = 'Zambia'
+limit 4
 
 -- maximální síla vìtru v nárazech bìhem dne = 'max_daily_gust'
 CREATE VIEW v_wind AS
@@ -368,11 +369,65 @@ SELECT
 	base.rainy_hours ,
 	a.max_daily_gust
 FROM v_wsmgrrlcpmpcgr AS base 
-JOIN v_wind AS a
+LEFT JOIN v_wind AS a
 	ON base.capital_city = a.city
 	AND base.date = a.date
 ;
 
+-- vytvoøení view v_temp, kde si na èíselný typ pøemìním sloupec s teplotou temp
+CREATE VIEW v_temp AS
+SELECT
+	time,
+	date,
+	city,
+	CAST(REPLACE(temp,' °c', '') AS DOUBLE) AS teplota
+FROM weather
+;
+
+-- vytvoøení sloupce teplota s prùmìrnou teplotou daného dne
+CREATE VIEW v_teplota_prumer AS
+SELECT 
+	time,
+	date, 
+	city,
+	avg(teplota) AS average_temperature
+	from v_temp
+where city is not null
+and time != '03:00'
+and time != '09:00'
+and time != '15:00'
+and time != '21:00'
+group by date, city
+;
+
+-- spojení v_teplota_prumer s celkovým view
+CREATE VIEW v_wsmgrrlcpmpcgrwt AS
+SELECT 
+	base.country ,
+	base.date ,
+	base.weekend , 
+	base.season , 
+	base.mortaliy_under5 ,
+	base.GDP_obyvatele_2019 ,
+	base.religion , 
+	base.religion_percentage_2020 ,
+	base.life_exp_difference , 
+	base.capital_city , 
+	base.population_density ,
+	base.median_age_2018 , 
+	base.percentage_confirmed ,
+	base.confirmed_per_milion , 
+	base.gini_koeficient ,
+	base.rainy_hours ,
+	base.max_daily_gust,
+	a.average_temperature
+FROM v_wsmgrrlcpmpcgrw AS base 
+LEFT JOIN v_teplota_prumer AS a
+	ON base.capital_city = a.city
+	AND base.date = a.date
+;
+
+-- vytvoøení finální tabulky
 CREATE TABLE t_dana_bartunkova_projekt_SQL_final AS
 SELECT 
 	country ,
@@ -391,10 +446,10 @@ SELECT
 	confirmed_per_milion , 
 	gini_koeficient ,
 	rainy_hours ,
-	max_daily_gust
-FROM v_wsmgrrlcpmpcgrw
+	max_daily_gust, 
+	average_temperature
+FROM v_wsmgrrlcpmpcgrwt
 ;
 
 
 describe t_dana_bartunkova_projekt_SQL_final
-
