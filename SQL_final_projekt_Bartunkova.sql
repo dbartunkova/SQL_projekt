@@ -42,6 +42,7 @@ JOIN v_season
 AND v_weekend.date = v_season.date
 ;
 
+
 -- vytvoøení view s GDP na osobu za rok 2019 = 'GDP_obyvatele_2019'
 CREATE VIEW v_hdp AS
 SELECT 
