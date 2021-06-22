@@ -1,13 +1,13 @@
--- úprava hodnot v tabulkách lookup_table a covid19_basic_differences
+-- Ãºprava hodnot v tabulkÃ¡ch lookup_table a covid19_basic_differences
 -- z "Czechia" na "Czech Republic"
 UPDATE lookup_table SET country = 'Czech Republic' WHERE country = 'Czechia';
 
 UPDATE covid19_basic_differences SET country = 'Czech Republic' WHERE country = 'Czechia';
 
--- úprava hodnot v tabulce countries z "Praha" na "Prague"
+-- Ãºprava hodnot v tabulce countries z "Praha" na "Prague"
 UPDATE countries SET capital_city = 'Prague' WHERE capital_city = 'Praha';
 
--- binární promìnná pro víkend/pracovní den = 'weekend'
+-- binÃ¡rnÃ­ promÃ¬nnÃ¡ pro vÃ­kend/pracovnÃ­ den = 'weekend'
 CREATE VIEW v_weekend AS
 SELECT 
 	c.country , 
@@ -16,7 +16,7 @@ SELECT
 FROM covid19_basic_differences c
 ;
 
--- roèní období daného dne = 'season'
+-- roÃ¨nÃ­ obdobÃ­ danÃ©ho dne = 'season'
 CREATE VIEW v_season AS
 SELECT 
 	c.country , 
@@ -42,7 +42,7 @@ JOIN v_season
 AND v_weekend.date = v_season.date
 ;
 
--- vytvoøení view s GDP na osobu za rok 2019 = 'GDP_obyvatele_2019'
+-- vytvoÃ¸enÃ­ view s GDP na osobu za rok 2019 = 'GDP_obyvatele_2019'
 CREATE VIEW v_hdp AS
 SELECT 
         *, 
@@ -56,7 +56,7 @@ WHERE country IN
 AND year = '2019'
 ;
 
--- spojení v_hdp s celkovým view
+-- spojenÃ­ v_hdp s celkovÃ½m view
 CREATE VIEW v_season_weekend_hdp AS
 SELECT 
 	v_season_weekend.country , 
@@ -70,7 +70,7 @@ JOIN v_hdp
 	ON v_season_weekend.country = v_hdp.country 
 ;
 
--- procentní podíl daných náboženství v daném státì = 'religion_percentage_2020'
+-- procentnÃ­ podÃ­l danÃ½ch nÃ¡boÅ¾enstvÃ­ v danÃ©m stÃ¡tÃ¬ = 'religion_percentage_2020'
 CREATE VIEW v_religion AS
 SELECT 
 	r.country , 
@@ -90,7 +90,7 @@ JOIN (
     AND r.population > 0
  ;
 
--- spojení v_religion s v_season_weekend_hdp
+-- spojenÃ­ v_religion s v_season_weekend_hdp
 CREATE VIEW v_season_weekend_hdp_religion AS
 SELECT 
 	v_season_weekend_hdp.country , 
@@ -106,7 +106,7 @@ JOIN v_religion
 	ON v_season_weekend_hdp.country = v_religion.country 
 ;
 
--- doba dožití v roce 1965 a 2015 a rozdíl mezi tìmto dvìma rokùm = 'life_exp_difference'
+-- doba doÅ¾itÃ­ v roce 1965 a 2015 a rozdÃ­l mezi tÃ¬mto dvÃ¬ma rokÃ¹m = 'life_exp_difference'
 CREATE VIEW v_doba_doziti AS
 SELECT 
 	a.country , 
@@ -125,7 +125,7 @@ FROM (
     ON a.country = b.country
 ;
 
--- spojení v_doba_doziti s celkovým view
+-- spojenÃ­ v_doba_doziti s celkovÃ½m view
 CREATE VIEW v_season_weekend_hdp_religion_doziti AS
 SELECT 
 	v_season_weekend_hdp_religion.country , 
@@ -142,7 +142,7 @@ JOIN v_doba_doziti
 	ON v_season_weekend_hdp_religion.country = v_doba_doziti.country 
 ;
 
--- vytvoøení sloupce 'percentage confirmed' - procento z provedených testù, které byly pozitivní
+-- vytvoÃ¸enÃ­ sloupce 'percentage confirmed' - procento z provedenÃ½ch testÃ¹, kterÃ© byly pozitivnÃ­
 CREATE VIEW v_covid AS
 SELECT
         base.date ,
@@ -169,7 +169,7 @@ LEFT JOIN
 	AND base.date = a.date
 ;
 
--- pøidání názvu hlavního mìsta, 'population_density' a 'median_age_2018'
+-- pÃ¸idÃ¡nÃ­ nÃ¡zvu hlavnÃ­ho mÃ¬sta, 'population_density' a 'median_age_2018'
 CREATE VIEW v_wsmgrrlcpm AS
 SELECT 
 	base.country, 
@@ -189,7 +189,7 @@ JOIN countries AS a
 	ON base.country = a.country
 ;
 
--- spojení v_covid s hlavním view
+-- spojenÃ­ v_covid s hlavnÃ­m view
 CREATE VIEW v_wsmgrrlcpmp AS
 SELECT 
 	base.country, 
@@ -211,7 +211,7 @@ JOIN v_covid AS a
 	AND base.date = a.date
 ;
 
--- vytvoøení sloupce 'confirmed_per_milion' - poèet dennì potvrzených pøípadù na milion obyvatel
+-- vytvoÃ¸enÃ­ sloupce 'confirmed_per_milion' - poÃ¨et dennÃ¬ potvrzenÃ½ch pÃ¸Ã­padÃ¹ na milion obyvatel
 CREATE VIEW v_daily_confirmed_per_milion AS
 SELECT
         base.date ,
@@ -236,7 +236,7 @@ LEFT JOIN
 	ON base.country = a.country
 ;
 
--- spojení v_daily_confirmed_per_milion s hlavním view
+-- spojenÃ­ v_daily_confirmed_per_milion s hlavnÃ­m view
 CREATE VIEW v_wsmgrrlcpmpc AS
 SELECT 
 	base.country , 
@@ -258,7 +258,7 @@ JOIN v_daily_confirmed_per_milion AS a
 	AND base.date = a.date
 ;
 
--- vytvoøení sloupce 'gini_koeficient'
+-- vytvoÃ¸enÃ­ sloupce 'gini_koeficient'
 CREATE VIEW v_gini AS
 SELECT 
 	country , 
@@ -269,7 +269,7 @@ WHERE gini IS NOT NULL
 GROUP BY country
 ;
 
--- pspojení v_gini s celkovým view
+-- pspojenÃ­ v_gini s celkovÃ½m view
 CREATE VIEW v_wsmgrrlcpmpcg AS
 SELECT 
 	base.country , 
@@ -292,7 +292,7 @@ JOIN v_gini AS a
 	ON base.country = a.country
 ;
 
--- poèet hodin v daném dni, kdy byly srážky nenulové = 'rainy_hours'
+-- poÃ¨et hodin v danÃ©m dni, kdy byly srÃ¡Å¾ky nenulovÃ© = 'rainy_hours'
 CREATE VIEW v_rain AS
 SELECT 
 	time , 
@@ -305,7 +305,7 @@ WHERE city IS NOT NULL
 GROUP BY date , city
 ;
 
--- spojení v_rain s celkovým view
+-- spojenÃ­ v_rain s celkovÃ½m view
 CREATE VIEW v_wsmgrrlcpmpcgr AS
 SELECT 
 	base.country , 
@@ -334,7 +334,7 @@ select * from v_wsmgrrlcpmpcg
 where country = 'Zambia'
 limit 4
 
--- maximální síla vìtru v nárazech bìhem dne = 'max_daily_gust'
+-- maximÃ¡lnÃ­ sÃ­la vÃ¬tru v nÃ¡razech bÃ¬hem dne = 'max_daily_gust'
 CREATE VIEW v_wind AS
 SELECT 
 	time , 
@@ -348,7 +348,7 @@ AND time != '00:00'
 GROUP BY date, city
 ;
 
--- spojení v_wind s celkovým view
+-- spojenÃ­ v_wind s celkovÃ½m view
 CREATE VIEW v_wsmgrrlcpmpcgrw AS
 SELECT 
 	base.country ,
@@ -374,17 +374,17 @@ LEFT JOIN v_wind AS a
 	AND base.date = a.date
 ;
 
--- vytvoøení view v_temp, kde si na èíselný typ pøemìním sloupec s teplotou temp
+-- vytvoÃ¸enÃ­ view v_temp, kde si na Ã¨Ã­selnÃ½ typ pÃ¸emÃ¬nÃ­m sloupec s teplotou temp
 CREATE VIEW v_temp AS
 SELECT
 	time,
 	date,
 	city,
-	CAST(REPLACE(temp,' °c', '') AS DOUBLE) AS teplota
+	CAST(REPLACE(temp,' Â°c', '') AS DOUBLE) AS teplota
 FROM weather
 ;
 
--- vytvoøení sloupce teplota s prùmìrnou teplotou daného dne
+-- vytvoÃ¸enÃ­ sloupce teplota s prÃ¹mÃ¬rnou teplotou danÃ©ho dne
 CREATE VIEW v_teplota_prumer AS
 SELECT 
 	time,
@@ -400,7 +400,7 @@ and time != '21:00'
 group by date, city
 ;
 
--- spojení v_teplota_prumer s celkovým view
+-- spojenÃ­ v_teplota_prumer s celkovÃ½m view
 CREATE VIEW v_wsmgrrlcpmpcgrwt AS
 SELECT 
 	base.country ,
@@ -427,7 +427,7 @@ LEFT JOIN v_teplota_prumer AS a
 	AND base.date = a.date
 ;
 
--- vytvoøení finální tabulky
+-- vytvoÃ¸enÃ­ finÃ¡lnÃ­ tabulky
 CREATE TABLE t_dana_bartunkova_projekt_SQL_final AS
 SELECT 
 	country ,
@@ -450,6 +450,5 @@ SELECT
 	average_temperature
 FROM v_wsmgrrlcpmpcgrwt
 ;
-
 
 describe t_dana_bartunkova_projekt_SQL_final
